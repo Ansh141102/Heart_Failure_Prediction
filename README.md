@@ -5,6 +5,9 @@ This project aims to predict the likelihood of heart failure in patients using a
 1.  **ML Analysis Pipeline**: A script that processes data, trains multiple models, and evaluates them.
 2.  **Web Application**: A user-friendly interface for doctors or patients to input data and get instant predictions.
 
+### 🚀 [Live Demo](https://heart-failure-prediction-5wt9.onrender.com/)
+
+
 ---
 
 ## 2. Dataset & Exploratory Analysis
