@@ -105,7 +105,8 @@ The project includes a Flask-based web application.
 ### How to Run Locally
 1.  Install dependencies: `pip install -r requirements.txt` (or install flask, pandas, sklearn, xgboost manually).
 2.  Run the app: `python app.py`
-3.  Open browser at `http://localhost:5000`
+3.  Open browser at `http://127.0.0.1:5000`
+
 
 ---
 

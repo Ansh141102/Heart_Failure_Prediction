@@ -1,4 +1,5 @@
 from flask import Flask, render_template, request, jsonify
+from pyngrok import ngrok
 import pandas as pd
 import numpy as np
 import joblib
@@ -172,6 +173,9 @@ def upload():
         return jsonify({'error': str(e)}), 400
 
 if __name__ == '__main__':
-    # Use Render's assigned PORT if available, otherwise default to 5000
-    port = int(os.environ.get('PORT', 5000))
-    app.run(host='0.0.0.0', port=port, debug=False)
+    # Set up ngrok tunnel
+    public_url = ngrok.connect(5000).public_url
+    print(f" * Ngrok Tunnel URL: {public_url}")
+
+    # Run the app
+    app.run(port=5000)
