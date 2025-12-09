@@ -173,9 +173,16 @@ def upload():
         return jsonify({'error': str(e)}), 400
 
 if __name__ == '__main__':
-    # Set up ngrok tunnel
-    public_url = ngrok.connect(5000).public_url
-    print(f" * Ngrok Tunnel URL: {public_url}")
+    # Only use ngrok if NOT running in Docker (we use an env var to check)
+    if os.environ.get('RENDER') != 'true':
+        try:
+            # Set up ngrok tunnel
+            public_url = ngrok.connect(5000).public_url
+            print(f" * Ngrok Tunnel URL: {public_url}")
+        except Exception as e:
+            print(f" * Ngrok failed to start: {e}")
 
     # Run the app
-    app.run(port=5000)
+    # In Docker, gunicorn handles the binding, but app.run is useful for local testing
+    port = int(os.environ.get('PORT', 5000))
+    app.run(host='0.0.0.0', port=port)
