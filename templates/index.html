@@ -4,238 +4,207 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Heart Failure Prediction</title>
+    <title>Heart Failure Prediction | AI Health Assistant</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
 </head>
 
 <body>
-    <div class="bg-animation">
-        <div class="blob blob-1"></div>
-        <div class="blob blob-2"></div>
-        <div class="blob blob-3"></div>
+    <div class="bg-universe">
+        <div class="orb orb-1"></div>
+        <div class="orb orb-2"></div>
+        <div class="grid-overlay"></div>
     </div>
 
-    <div class="container">
-        <header class="app-header">
-            <div class="header-main">
-
-                <!-- ✅ Logo + Title Section -->
-                <div class="logo-title-wrapper">
-                    <img src="{{ url_for('static', filename='logoAI.png') }}" class="app-logo" alt="Heart AI Logo">
-
-                    <div>
-                        <p class="eyebrow">AI Health Assistant</p>
-                        <h1>Heart Failure Prediction</h1>
-                        <p class="subtitle">
-                            Get a quick, AI-assisted risk estimate based on standard clinical measurements.
-                        </p>
-                    </div>
+    <div class="main-layout">
+        <header>
+            <div class="logo-area">
+                <div class="logo-icon">
+                    <i class="fa-solid fa-heart-pulse"></i>
                 </div>
-
-                <!-- ✅ Badges Section (Unchanged) -->
-                <div class="header-badges">
-                    <div class="badge">
-                        <span>⚡</span>
-                        <div>
-                            <p class="badge-title">Instant Result</p>
-                            <p class="badge-text">Takes just a few seconds</p>
-                        </div>
-                    </div>
-                    <div class="badge">
-                        <span>🔒</span>
-                        <div>
-                            <p class="badge-title">Privacy First</p>
-                            <p class="badge-text">No login, no sign-up</p>
-                        </div>
-                    </div>
-                    <div class="badge">
-                        <span>📊</span>
-                        <div>
-                            <p class="badge-title">Batch Mode</p>
-                            <p class="badge-text">Upload CSV for multiple patients</p>
-                        </div>
-                    </div>
+                <div>
+                    <h1>HeartGuard <span class="highlight">AI</span></h1>
+                    <p>Advanced Cardiac Risk Assessment</p>
                 </div>
-
             </div>
-
-
-            <div class="helper-strip">
-                <div class="helper-item">
-                    <span class="helper-icon">ℹ️</span>
-                    <p>Use actual values from reports (BP, cholesterol, etc.) for meaningful output.</p>
-                </div>
-                <div class="helper-item">
-                    <span class="helper-icon">⚕️</span>
-                    <p>This tool is for education & screening support only — it does not replace a doctor.</p>
-                </div>
+            <div class="header-actions">
+                <a href="#about" class="nav-link">About Model</a>
+                <a href="https://github.com/Ansh141102/Heart_Failure_Prediction" target="_blank" class="nav-link"><i class="fa-brands fa-github"></i> GitHub</a>
             </div>
         </header>
 
-        <div class="card-container">
-            <!-- Manual Input Form -->
-            <div class="card">
-                <div class="card-header">
-                    <h2>Manual Assessment</h2>
-                    <p class="card-subtitle">
-                        Fill in one patient’s details to generate a personalized heart failure risk estimate.
-                    </p>
-                </div>
-
-                <div class="chip-row">
-                    <button type="button" class="preset-chip" data-preset="low">
-                        🟢 Sample: Low Risk
-                    </button>
-                    <button type="button" class="preset-chip" data-preset="medium">
-                        🟡 Sample: Moderate Risk
-                    </button>
-                    <button type="button" class="preset-chip" data-preset="high">
-                        🔴 Sample: High Risk
-                    </button>
+        <div class="dashboard-grid">
+            <!-- Left Panel: Input -->
+            <section class="input-panel">
+                <div class="panel-header">
+                    <h2><i class="fa-solid fa-user-doctor"></i> Patient Vitals</h2>
+                    <p>Enter clinical parameters for analysis.</p>
                 </div>
 
                 <form id="predictionForm">
-                    <div class="form-grid">
-                        <div class="form-group">
-                            <label>Age</label>
-                            <input type="number" name="Age" required min="1" max="120" placeholder="e.g., 54">
+                    <div class="input-scroll-area">
+                        <!-- Demographics -->
+                        <div class="input-group">
+                            <label>Age: <span id="ageVal" class="val-display">50</span></label>
+                            <input type="range" name="Age" min="20" max="100" value="50" class="slider" oninput="document.getElementById('ageVal').innerText = this.value">
                         </div>
-                        <div class="form-group">
-                            <label>Sex</label>
-                            <select name="Sex" required>
-                                <option value="M">Male</option>
-                                <option value="F">Female</option>
-                            </select>
+
+                        <div class="row-2">
+                            <div class="input-group">
+                                <label>Sex</label>
+                                <div class="toggle-switch">
+                                    <input type="radio" name="Sex" value="M" id="sexM" checked>
+                                    <label for="sexM">Male</label>
+                                    <input type="radio" name="Sex" value="F" id="sexF">
+                                    <label for="sexF">Female</label>
+                                </div>
+                            </div>
+                            <div class="input-group">
+                                <label>Chest Pain</label>
+                                <select name="ChestPainType" class="glass-select">
+                                    <option value="ASY">Asymptomatic</option>
+                                    <option value="NAP">Non-Anginal</option>
+                                    <option value="ATA">Atypical Angina</option>
+                                    <option value="TA">Typical Angina</option>
+                                </select>
+                            </div>
                         </div>
-                        <div class="form-group">
-                            <label>Chest Pain Type</label>
-                            <select name="ChestPainType" required>
-                                <option value="ASY">Asymptomatic (ASY)</option>
-                                <option value="NAP">Non-Anginal Pain (NAP)</option>
-                                <option value="ATA">Atypical Angina (ATA)</option>
-                                <option value="TA">Typical Angina (TA)</option>
-                            </select>
+
+                        <!-- Vitals -->
+                        <div class="input-group">
+                            <label>Resting BP: <span id="bpVal" class="val-display">120</span> <small>mm Hg</small></label>
+                            <input type="range" name="RestingBP" min="80" max="200" value="120" class="slider" oninput="document.getElementById('bpVal').innerText = this.value">
                         </div>
-                        <div class="form-group">
-                            <label>Resting BP (mm Hg)</label>
-                            <input type="number" name="RestingBP" required min="50" max="250" placeholder="e.g., 130">
+
+                        <div class="input-group">
+                            <label>Cholesterol: <span id="cholVal" class="val-display">200</span> <small>mg/dl</small></label>
+                            <input type="range" name="Cholesterol" min="100" max="600" value="200" class="slider" oninput="document.getElementById('cholVal').innerText = this.value">
                         </div>
-                        <div class="form-group">
-                            <label>Cholesterol (mm/dl)</label>
-                            <input type="number" name="Cholesterol" required min="0" max="600" placeholder="e.g., 220">
+
+                        <div class="input-group">
+                            <label>Max Heart Rate: <span id="hrVal" class="val-display">150</span> <small>bpm</small></label>
+                            <input type="range" name="MaxHR" min="60" max="220" value="150" class="slider" oninput="document.getElementById('hrVal').innerText = this.value">
                         </div>
-                        <div class="form-group">
-                            <label>Fasting BS &gt; 120 mg/dl?</label>
-                            <select name="FastingBS" required>
-                                <option value="0">No</option>
-                                <option value="1">Yes</option>
-                            </select>
+
+                        <!-- Boolean & Categorical -->
+                        <div class="row-2">
+                            <div class="input-group">
+                                <label>Fasting BS > 120?</label>
+                                <div class="toggle-switch small">
+                                    <input type="radio" name="FastingBS" value="0" id="bs0" checked>
+                                    <label for="bs0">No</label>
+                                    <input type="radio" name="FastingBS" value="1" id="bs1">
+                                    <label for="bs1">Yes</label>
+                                </div>
+                            </div>
+                            <div class="input-group">
+                                <label>Exercise Angina?</label>
+                                <div class="toggle-switch small">
+                                    <input type="radio" name="ExerciseAngina" value="N" id="anginaN" checked>
+                                    <label for="anginaN">No</label>
+                                    <input type="radio" name="ExerciseAngina" value="Y" id="anginaY">
+                                    <label for="anginaY">Yes</label>
+                                </div>
+                            </div>
                         </div>
-                        <div class="form-group">
-                            <label>Resting ECG</label>
-                            <select name="RestingECG" required>
-                                <option value="Normal">Normal</option>
-                                <option value="LVH">Left Ventricular Hypertrophy</option>
-                                <option value="ST">ST-T Wave Abnormality</option>
-                            </select>
+
+                        <div class="row-2">
+                            <div class="input-group">
+                                <label>Resting ECG</label>
+                                <select name="RestingECG" class="glass-select">
+                                    <option value="Normal">Normal</option>
+                                    <option value="LVH">LV Hypertrophy</option>
+                                    <option value="ST">ST Abnormality</option>
+                                </select>
+                            </div>
+                            <div class="input-group">
+                                <label>ST Slope</label>
+                                <select name="ST_Slope" class="glass-select">
+                                    <option value="Flat">Flat</option>
+                                    <option value="Up">Up</option>
+                                    <option value="Down">Down</option>
+                                </select>
+                            </div>
                         </div>
-                        <div class="form-group">
-                            <label>Max Heart Rate</label>
-                            <input type="number" name="MaxHR" required min="60" max="220" placeholder="e.g., 150">
-                        </div>
-                        <div class="form-group">
-                            <label>Exercise Angina?</label>
-                            <select name="ExerciseAngina" required>
-                                <option value="N">No</option>
-                                <option value="Y">Yes</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label>Oldpeak (ST Depression)</label>
-                            <input type="number" step="0.1" name="Oldpeak" required min="-5" max="10"
-                                placeholder="e.g., 1.2">
-                        </div>
-                        <div class="form-group">
-                            <label>ST Slope</label>
-                            <select name="ST_Slope" required>
-                                <option value="Flat">Flat</option>
-                                <option value="Up">Up</option>
-                                <option value="Down">Down</option>
-                            </select>
+
+                        <div class="input-group">
+                            <label>Oldpeak (ST Depression): <span id="oldpeakVal" class="val-display">0.0</span></label>
+                            <input type="range" name="Oldpeak" min="-2.0" max="6.0" step="0.1" value="0.0" class="slider" oninput="document.getElementById('oldpeakVal').innerText = this.value">
                         </div>
                     </div>
 
-                    <div class="form-footer">
-                        <button type="submit" class="btn-primary" id="predictBtn">
-                            Predict Risk
+                    <div class="form-actions">
+                        <button type="submit" class="btn-glow" id="predictBtn">
+                            <i class="fa-solid fa-bolt"></i> Analyze Risk
                         </button>
-                        <p class="form-disclaimer">
-                            Your data is processed only for this prediction and is not stored on the server.
-                        </p>
                     </div>
                 </form>
+            </section>
 
-                <div id="manualResult" class="result-box hidden"></div>
-            </div>
+            <!-- Right Panel: Output -->
+            <section class="output-panel">
+                <!-- Initial State -->
+                <div id="welcomeState" class="state-view active">
+                    <div class="scanner-anim">
+                        <div class="scanner-line"></div>
+                        <i class="fa-solid fa-heart-pulse big-icon"></i>
+                    </div>
+                    <h3>Ready for Analysis</h3>
+                    <p>Enter patient vitals on the left to generate a real-time risk assessment using our AI model.</p>
+                    
+                    <div class="features-list">
+                        <div class="feature"><i class="fa-solid fa-microchip"></i> 91% Accuracy</div>
+                        <div class="feature"><i class="fa-solid fa-shield-halved"></i> Secure Processing</div>
+                    </div>
 
-            <!-- File Upload -->
-            <div class="card side-card">
-                <div class="card-header">
-                    <h2>Batch Prediction (CSV)</h2>
-                    <p class="card-subtitle">
-                        Upload a CSV file to analyze heart failure risk for multiple patients at once.
-                    </p>
+                    <!-- Batch Upload Area -->
+                     <div class="batch-upload-mini">
+                        <h4>Or Upload CSV</h4>
+                        <form id="uploadForm">
+                            <label for="csvIn" class="file-label">
+                                <i class="fa-solid fa-file-csv"></i> Choose File
+                            </label>
+                            <input type="file" name="file" id="csvIn" accept=".csv" required hidden onchange="this.form.dispatchEvent(new Event('submit'))">
+                            <span id="fileName"></span>
+                        </form>
+                     </div>
                 </div>
 
-                <form id="uploadForm">
-                    <div class="file-drop-area">
-                        <span class="file-msg">Drag &amp; drop or click to select a CSV file</span>
-                        <input type="file" name="file" class="file-input" accept=".csv" required>
+                <!-- Result State -->
+                <div id="resultState" class="state-view">
+                    <div class="result-card">
+                        <div class="gauge-wrapper">
+                            <div class="gauge-bg"></div>
+                            <div class="gauge-fill" id="gaugeFill"></div>
+                            <div class="gauge-cover">
+                                <span id="resultPercent">0%</span>
+                                <small>Probability</small>
+                            </div>
+                        </div>
+                        <h2 id="riskLabel">Safe</h2>
+                        <p id="riskDesc">Consistent with healthy profiles.</p>
                     </div>
-                    <button type="submit" class="btn-secondary" id="uploadBtn">
-                        Analyze File
-                    </button>
-                </form>
 
-                <div class="csv-hint">
-                    <h3>Required CSV Columns</h3>
-                    <ul>
-                        <li>Age, Sex (M/F), ChestPainType (ASY/NAP/ATA/TA)</li>
-                        <li>RestingBP, Cholesterol, FastingBS (0/1)</li>
-                        <li>RestingECG, MaxHR, ExerciseAngina (Y/N)</li>
-                        <li>Oldpeak, ST_Slope (Up/Flat/Down)</li>
-                    </ul>
-                    <p class="csv-note">Header names should match exactly for best results.</p>
+                    <div class="factors-list" id="factorsList">
+                        <!-- JS injects here -->
+                    </div>
+
+                    <button class="btn-reset" onclick="location.reload()"><i class="fa-solid fa-rotate-right"></i> Start Over</button>
                 </div>
-
-                <div class="legend-panel">
-                    <h3>Risk Level Guide</h3>
-                    <div class="legend-row">
-                        <span class="legend-dot legend-low"></span>
-                        <span>0–30% &mdash; Low Risk</span>
+                
+                 <!-- Batch Result State -->
+                 <div id="batchState" class="state-view">
+                    <h3>Batch Results</h3>
+                    <div class="results-table-wrapper" id="batchTable">
+                        <!-- JS injects table -->
                     </div>
-                    <div class="legend-row">
-                        <span class="legend-dot legend-medium"></span>
-                        <span>31–60% &mdash; Moderate Risk</span>
-                    </div>
-                    <div class="legend-row">
-                        <span class="legend-dot legend-high"></span>
-                        <span>61–100% &mdash; High Risk</span>
-                    </div>
-                </div>
-
-                <div id="uploadResult" class="result-box hidden"></div>
-            </div>
+                    <button class="btn-reset" onclick="location.reload()">Close</button>
+                 </div>
+            </section>
         </div>
-
-        <footer class="app-footer">
-            <p>⚠ This tool does not provide a medical diagnosis or emergency advice. In case of symptoms, contact a
-                doctor immediately.</p>
-        </footer>
     </div>
 
     <script src="{{ url_for('static', filename='script.js') }}"></script>
 </body>
-
 </html>
