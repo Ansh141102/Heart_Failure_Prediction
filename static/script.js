@@ -1,183 +1,237 @@
 document.addEventListener('DOMContentLoaded', () => {
     const predictionForm = document.getElementById('predictionForm');
     const uploadForm = document.getElementById('uploadForm');
-    
-    // States
-    const stateWelcome = document.getElementById('welcomeState');
-    const stateResult = document.getElementById('resultState');
-    const stateBatch = document.getElementById('batchState');
-    
-    // Result Elements
-    const gaugeFill = document.getElementById('gaugeFill');
-    const resultPercent = document.getElementById('resultPercent');
-    const riskLabel = document.getElementById('riskLabel');
-    const riskDesc = document.getElementById('riskDesc');
-    const factorsList = document.getElementById('factorsList');
-    
-    // --- Helper: State Switcher ---
-    function switchState(targetState) {
-        [stateWelcome, stateResult, stateBatch].forEach(el => {
-            el.classList.remove('active');
-        });
-        targetState.classList.add('active');
-    }
+    const fileInput = document.querySelector('.file-input');
+    const fileMsg = document.querySelector('.file-msg');
+    const predictBtn = document.getElementById('predictBtn');
+    const uploadBtn = document.getElementById('uploadBtn');
+    const presetChips = document.querySelectorAll('.preset-chip');
 
-    // --- Helper: Animate Gauge ---
-    function animateGauge(percent) {
-        // 0% -> rotate(0deg), 100% -> rotate(360deg) for fill
-        const deg = (percent / 100) * 360;
-        gaugeFill.style.transform = `rotate(${deg}deg)`;
-        
-        // Counter animation
-        let start = 0;
-        const duration = 1500;
-        const stepTime = Math.abs(Math.floor(duration / percent));
-        
-        const timer = setInterval(() => {
-            start++;
-            resultPercent.innerText = start + "%";
-            if (start >= percent) clearInterval(timer);
-        }, stepTime);
-        
-        // Color logic
-        if (percent < 30) {
-            gaugeFill.style.borderTopColor = "#10b981"; // Green
-            riskLabel.style.color = "#10b981";
-        } else if (percent < 60) {
-            gaugeFill.style.borderTopColor = "#facc15"; // Yellow
-            riskLabel.style.color = "#facc15";
+    // Helper: button loading state
+    function setLoading(button, isLoading, loadingText) {
+        if (!button) return;
+        if (isLoading) {
+            button.disabled = true;
+            button.classList.add('is-loading');
+            button.dataset.originalText = button.textContent;
+            if (loadingText) {
+                button.textContent = loadingText;
+            }
         } else {
-            gaugeFill.style.borderTopColor = "#ef4444"; // Red
-            riskLabel.style.color = "#ef4444";
+            button.disabled = false;
+            button.classList.remove('is-loading');
+            if (button.dataset.originalText) {
+                button.textContent = button.dataset.originalText;
+            }
         }
     }
 
-    // --- Handle Single Prediction ---
+    // Sample presets for quick testing
+    const presets = {
+        low: {
+            Age: 32,
+            Sex: 'F',
+            ChestPainType: 'NAP',
+            RestingBP: 118,
+            Cholesterol: 190,
+            FastingBS: '0',
+            RestingECG: 'Normal',
+            MaxHR: 172,
+            ExerciseAngina: 'N',
+            Oldpeak: 0.0,
+            ST_Slope: 'Up'
+        },
+        medium: {
+            Age: 56,
+            Sex: 'M',
+            ChestPainType: 'ATA',
+            RestingBP: 135,
+            Cholesterol: 230,
+            FastingBS: '1',
+            RestingECG: 'ST',
+            MaxHR: 145,
+            ExerciseAngina: 'N',
+            Oldpeak: 1.4,
+            ST_Slope: 'Flat'
+        },
+        high: {
+            Age: 67,
+            Sex: 'M',
+            ChestPainType: 'ASY',
+            RestingBP: 160,
+            Cholesterol: 290,
+            FastingBS: '1',
+            RestingECG: 'LVH',
+            MaxHR: 110,
+            ExerciseAngina: 'Y',
+            Oldpeak: 3.0,
+            ST_Slope: 'Down'
+        }
+    };
+
+    // Apply presets on click
+    presetChips.forEach(chip => {
+        chip.addEventListener('click', () => {
+            const key = chip.dataset.preset;
+            const preset = presets[key];
+            if (!preset) return;
+
+            Object.entries(preset).forEach(([name, value]) => {
+                if (predictionForm.elements[name]) {
+                    predictionForm.elements[name].value = value;
+                }
+            });
+        });
+    });
+
+    // Handle Manual Prediction
     predictionForm.addEventListener('submit', async (e) => {
         e.preventDefault();
-        const btn = document.getElementById('predictBtn');
-        const originalText = btn.innerHTML;
-        
-        btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Analyzing...';
-        btn.disabled = true;
-
         const formData = new FormData(predictionForm);
         const data = Object.fromEntries(formData.entries());
+        const resultBox = document.getElementById('manualResult');
+
+        resultBox.className = 'result-box';
+        resultBox.style.display = 'block';
+        resultBox.innerHTML = 'Analyzing...';
+
+        setLoading(predictBtn, true, 'Analyzing…');
 
         try {
             const response = await fetch('/predict', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(data)
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data),
             });
+
             const result = await response.json();
 
             if (result.error) {
-                alert("Error: " + result.error);
+                resultBox.innerHTML = `Error: ${result.error}`;
                 return;
             }
 
-            // Update UI
-            switchState(stateResult);
-            
-            // Risk Label Logic
-            riskLabel.innerText = result.risk_level + " Risk";
-            if (result.risk_level === "High") {
-                riskDesc.innerText = "Medical consultation strongly recommended.";
-            } else {
-                riskDesc.innerText = "Maintain healthy habits.";
-            }
+            const riskClass = result.risk_level === 'High' ? 'result-high' : 'result-low';
+            resultBox.className = `result-box ${riskClass}`;
 
-            // Render factors
-            factorsList.innerHTML = "";
+            let factorsHtml = '';
             if (result.risk_factors && result.risk_factors.length > 0) {
-                factorsList.innerHTML = "<h4>⚠️ Primary Contributors:</h4>";
-                result.risk_factors.forEach((f, index) => {
-                    const div = document.createElement('div');
-                    div.className = 'factor-item';
-                    div.style.animationDelay = (index * 0.1) + "s";
-                    div.innerHTML = `<i class="fa-solid fa-triangle-exclamation"></i> ${f}`;
-                    factorsList.appendChild(div);
-                });
+                factorsHtml = `
+                    <div class="risk-factors">
+                        <h4>⚠️ Key Risk Factors:</h4>
+                        <ul>
+                            ${result.risk_factors.map(f => `<li>${f}</li>`).join('')}
+                        </ul>
+                    </div>
+                `;
             } else {
-                factorsList.innerHTML = "<p style='color:#10b981'><i class='fa-solid fa-check-circle'></i> No critical risk factors detected.</p>";
+                factorsHtml = `<p class="safe-msg">✅ No major risk factors identified by the model.</p>`;
             }
 
-            // Trigger Animation
-            setTimeout(() => {
-                animateGauge(result.probability);
-            }, 100);
-
-        } catch (err) {
-            console.error(err);
-            alert("Connection error.");
+            resultBox.innerHTML = `
+                <h3>Assessment Result</h3>
+                <span class="probability">${result.probability}%</span>
+                <p>Estimated probability of heart failure for this profile.</p>
+                <p><strong>Risk Level: ${result.risk_level}</strong></p>
+                ${factorsHtml}
+            `;
+        } catch (error) {
+            console.error(error);
+            resultBox.innerHTML = 'An unexpected error occurred. Please try again.';
         } finally {
-            btn.innerHTML = originalText;
-            btn.disabled = false;
+            setLoading(predictBtn, false);
         }
     });
 
-    // --- Handle File Upload ---
-    document.getElementById('csvIn').addEventListener('change', function() {
-        if(this.files && this.files.length > 0) {
-            document.getElementById('fileName').innerText = this.files[0].name;
-            // Auto submit or wait? logic below uses auto event dispatch
+    // Handle File Upload Display
+    fileInput.addEventListener('change', (e) => {
+        if (e.target.files.length > 0) {
+            fileMsg.textContent = e.target.files[0].name;
+        } else {
+            fileMsg.textContent = 'Drag & drop or click to select a CSV file';
         }
     });
 
+    // Handle Batch Prediction
     uploadForm.addEventListener('submit', async (e) => {
         e.preventDefault();
-        if(!document.getElementById('csvIn').files.length) return;
-
         const formData = new FormData(uploadForm);
-        
+        const resultBox = document.getElementById('uploadResult');
+
+        resultBox.className = 'result-box';
+        resultBox.style.display = 'block';
+        resultBox.innerHTML = 'Processing file...';
+
+        setLoading(uploadBtn, true, 'Processing…');
+
         try {
             const response = await fetch('/upload', {
                 method: 'POST',
-                body: formData
+                body: formData,
             });
+
             const result = await response.json();
-            
-            if(result.error) {
-                alert(result.error);
+
+            if (result.error) {
+                resultBox.innerHTML = `Error: ${result.error}`;
                 return;
             }
 
-            // Render Table in Modal/View
-            switchState(stateBatch);
-            const tableDiv = document.getElementById('batchTable');
-            
-            let html = `
-                <table style="width:100%; text-align:left; border-collapse:collapse; color:white;">
-                    <thead style="background:rgba(255,255,255,0.1); color:var(--primary);">
-                        <tr>
-                            <th style="padding:10px;">Age/Sex</th>
-                            <th style="padding:10px;">Risk</th>
-                            <th style="padding:10px;">Factors</th>
-                        </tr>
-                    </thead>
-                    <tbody>
+            if (!result.results || !Array.isArray(result.results)) {
+                resultBox.innerHTML = 'Unexpected response format from server.';
+                return;
+            }
+
+            // Create a table for first 50 results
+            let tableHtml = `
+                <h3>Batch Analysis Complete</h3>
+                <p>Processed ${result.results.length} records.</p>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Age</th>
+                                <th>Sex</th>
+                                <th>Risk %</th>
+                                <th>Level</th>
+                                <th>Key Factors</th>
+                            </tr>
+                        </thead>
+                        <tbody>
             `;
-            
+
+            // Show up to top 50 results
             result.results.slice(0, 50).forEach(row => {
-                const color = row.Risk_Probability > 50 ? '#ef4444' : '#10b981';
-                html += `
-                    <tr style="border-bottom:1px solid rgba(255,255,255,0.05);">
-                        <td style="padding:10px;">${row.Age} / ${row.Sex}</td>
-                        <td style="padding:10px; color:${color}; font-weight:bold;">
-                            ${row.Risk_Probability}%
-                        </td>
-                        <td style="padding:10px; font-size:0.85rem; color:#94a3b8;">
-                            ${row.Risk_Factors.join(', ')}
-                        </td>
+                const factors = row.Risk_Factors && row.Risk_Factors.length > 0
+                    ? row.Risk_Factors.join(', ')
+                    : 'None';
+
+                tableHtml += `
+                    <tr>
+                        <td>${row.Age}</td>
+                        <td>${row.Sex}</td>
+                        <td>${row.Risk_Probability}%</td>
+                        <td>${row.Risk_Level}</td>
+                        <td class="factors-cell">${factors}</td>
                     </tr>
                 `;
             });
-            html += "</tbody></table>";
-            tableDiv.innerHTML = html;
 
-        } catch (err) {
-            alert("Upload failed.");
+            tableHtml += `
+                        </tbody>
+                    </table>
+                </div>
+                <p style="margin-top: 1rem; font-size: 0.8rem;">*Showing first 50 results</p>
+            `;
+
+            resultBox.innerHTML = tableHtml;
+        } catch (error) {
+            console.error(error);
+            resultBox.innerHTML = 'An error occurred during upload. Please check the CSV and try again.';
+        } finally {
+            setLoading(uploadBtn, false);
         }
     });
 });
