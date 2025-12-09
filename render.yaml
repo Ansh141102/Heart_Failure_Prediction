@@ -2,7 +2,6 @@ services:
   - type: web
     name: Heart_Failure_Prediction
     env: docker
-    region: oregon 
     plan: free
     branch: main
     envVars:
