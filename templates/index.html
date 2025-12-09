@@ -11,10 +11,9 @@
 </head>
 
 <body>
-    <div class="bg-universe">
-        <div class="orb orb-1"></div>
-        <div class="orb orb-2"></div>
-        <div class="grid-overlay"></div>
+    <div class="bg-clinical">
+        <div class="blob-soft blob-1"></div>
+        <div class="blob-soft blob-2"></div>
     </div>
 
     <div class="main-layout">
@@ -30,7 +29,8 @@
             </div>
             <div class="header-actions">
                 <a href="#about" class="nav-link">About Model</a>
-                <a href="https://github.com/Ansh141102/Heart_Failure_Prediction" target="_blank" class="nav-link"><i class="fa-brands fa-github"></i> GitHub</a>
+                <a href="https://github.com/Ansh141102/Heart_Failure_Prediction" target="_blank" class="nav-link"><i
+                        class="fa-brands fa-github"></i> GitHub</a>
             </div>
         </header>
 
@@ -47,7 +47,8 @@
                         <!-- Demographics -->
                         <div class="input-group">
                             <label>Age: <span id="ageVal" class="val-display">50</span></label>
-                            <input type="range" name="Age" min="20" max="100" value="50" class="slider" oninput="document.getElementById('ageVal').innerText = this.value">
+                            <input type="range" name="Age" min="20" max="100" value="50" class="slider"
+                                oninput="document.getElementById('ageVal').innerText = this.value">
                         </div>
 
                         <div class="row-2">
@@ -73,18 +74,24 @@
 
                         <!-- Vitals -->
                         <div class="input-group">
-                            <label>Resting BP: <span id="bpVal" class="val-display">120</span> <small>mm Hg</small></label>
-                            <input type="range" name="RestingBP" min="80" max="200" value="120" class="slider" oninput="document.getElementById('bpVal').innerText = this.value">
+                            <label>Resting BP: <span id="bpVal" class="val-display">120</span> <small>mm
+                                    Hg</small></label>
+                            <input type="range" name="RestingBP" min="80" max="200" value="120" class="slider"
+                                oninput="document.getElementById('bpVal').innerText = this.value">
                         </div>
 
                         <div class="input-group">
-                            <label>Cholesterol: <span id="cholVal" class="val-display">200</span> <small>mg/dl</small></label>
-                            <input type="range" name="Cholesterol" min="100" max="600" value="200" class="slider" oninput="document.getElementById('cholVal').innerText = this.value">
+                            <label>Cholesterol: <span id="cholVal" class="val-display">200</span>
+                                <small>mg/dl</small></label>
+                            <input type="range" name="Cholesterol" min="100" max="600" value="200" class="slider"
+                                oninput="document.getElementById('cholVal').innerText = this.value">
                         </div>
 
                         <div class="input-group">
-                            <label>Max Heart Rate: <span id="hrVal" class="val-display">150</span> <small>bpm</small></label>
-                            <input type="range" name="MaxHR" min="60" max="220" value="150" class="slider" oninput="document.getElementById('hrVal').innerText = this.value">
+                            <label>Max Heart Rate: <span id="hrVal" class="val-display">150</span>
+                                <small>bpm</small></label>
+                            <input type="range" name="MaxHR" min="60" max="220" value="150" class="slider"
+                                oninput="document.getElementById('hrVal').innerText = this.value">
                         </div>
 
                         <!-- Boolean & Categorical -->
@@ -130,7 +137,8 @@
 
                         <div class="input-group">
                             <label>Oldpeak (ST Depression): <span id="oldpeakVal" class="val-display">0.0</span></label>
-                            <input type="range" name="Oldpeak" min="-2.0" max="6.0" step="0.1" value="0.0" class="slider" oninput="document.getElementById('oldpeakVal').innerText = this.value">
+                            <input type="range" name="Oldpeak" min="-2.0" max="6.0" step="0.1" value="0.0"
+                                class="slider" oninput="document.getElementById('oldpeakVal').innerText = this.value">
                         </div>
                     </div>
 
@@ -152,23 +160,24 @@
                     </div>
                     <h3>Ready for Analysis</h3>
                     <p>Enter patient vitals on the left to generate a real-time risk assessment using our AI model.</p>
-                    
+
                     <div class="features-list">
                         <div class="feature"><i class="fa-solid fa-microchip"></i> 91% Accuracy</div>
                         <div class="feature"><i class="fa-solid fa-shield-halved"></i> Secure Processing</div>
                     </div>
 
                     <!-- Batch Upload Area -->
-                     <div class="batch-upload-mini">
+                    <div class="batch-upload-mini">
                         <h4>Or Upload CSV</h4>
                         <form id="uploadForm">
                             <label for="csvIn" class="file-label">
                                 <i class="fa-solid fa-file-csv"></i> Choose File
                             </label>
-                            <input type="file" name="file" id="csvIn" accept=".csv" required hidden onchange="this.form.dispatchEvent(new Event('submit'))">
+                            <input type="file" name="file" id="csvIn" accept=".csv" required hidden
+                                onchange="this.form.dispatchEvent(new Event('submit'))">
                             <span id="fileName"></span>
                         </form>
-                     </div>
+                    </div>
                 </div>
 
                 <!-- Result State -->
@@ -190,21 +199,23 @@
                         <!-- JS injects here -->
                     </div>
 
-                    <button class="btn-reset" onclick="location.reload()"><i class="fa-solid fa-rotate-right"></i> Start Over</button>
+                    <button class="btn-reset" onclick="location.reload()"><i class="fa-solid fa-rotate-right"></i> Start
+                        Over</button>
                 </div>
-                
-                 <!-- Batch Result State -->
-                 <div id="batchState" class="state-view">
+
+                <!-- Batch Result State -->
+                <div id="batchState" class="state-view">
                     <h3>Batch Results</h3>
                     <div class="results-table-wrapper" id="batchTable">
                         <!-- JS injects table -->
                     </div>
                     <button class="btn-reset" onclick="location.reload()">Close</button>
-                 </div>
+                </div>
             </section>
         </div>
     </div>
 
     <script src="{{ url_for('static', filename='script.js') }}"></script>
 </body>
+
 </html>
