@@ -8,9 +8,9 @@ import os
 app = Flask(__name__)
 
 # Load Model and Scaler
-MODEL_PATH = 'heart_model.pkl'
-SCALER_PATH = 'scaler.pkl'
-FEATURES_PATH = 'model_features.pkl'
+MODEL_PATH = 'deployment/heart_model.pkl'
+SCALER_PATH = 'deployment/scaler.pkl'
+FEATURES_PATH = 'deployment/model_features.pkl'
 
 if os.path.exists(MODEL_PATH) and os.path.exists(SCALER_PATH) and os.path.exists(FEATURES_PATH):
     model = joblib.load(MODEL_PATH)

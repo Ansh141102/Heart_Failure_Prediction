@@ -24,8 +24,8 @@ import joblib
 # --- Dataset Details ---
 DATASET_FILENAME = 'heart.csv'
 FIGURE_FILENAME = 'heart_figure1.png'
-MODEL_FILENAME = 'heart_model.pkl'
-SCALER_FILENAME = 'scaler.pkl'
+MODEL_FILENAME = 'deployment/heart_model.pkl'
+SCALER_FILENAME = 'deployment/scaler.pkl'
 
 def run_analysis():
     """
@@ -262,10 +262,10 @@ def run_analysis():
     joblib.dump(model_ensemble, MODEL_FILENAME)
     joblib.dump(scaler, SCALER_FILENAME)
     # Also save the feature columns to ensure alignment during inference
-    joblib.dump(all_feature_names, 'model_features.pkl')
+    joblib.dump(all_feature_names, 'deployment/model_features.pkl')
     print(f"Model saved to '{MODEL_FILENAME}'")
     print(f"Scaler saved to '{SCALER_FILENAME}'")
-    print(f"Feature names saved to 'model_features.pkl'")
+    print(f"Feature names saved to 'deployment/model_features.pkl'")
 
     print("=== SCRIPT FINISHED ===")
 
