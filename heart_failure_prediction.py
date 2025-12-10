@@ -114,7 +114,7 @@ def run_analysis():
 
     # Model 1: Logistic Regression
     print("Fitting Logistic Regression...")
-    model_lr = LogisticRegression(random_state=42, max_iter=2000, class_weight='balanced', C=0.1)
+    model_lr = LogisticRegression(random_state=42, max_iter=2000, C=0.1)
     model_lr.fit(X_train, y_train)
 
     # Model 2: Random Forest (Tuned)
@@ -127,7 +127,7 @@ def run_analysis():
         'bootstrap': [True, False]
     }
     rf_search = RandomizedSearchCV(
-        RandomForestClassifier(random_state=42, class_weight='balanced'),
+        RandomForestClassifier(random_state=42),
         param_distributions=rf_params,
         n_iter=20,
         cv=5,
@@ -141,7 +141,7 @@ def run_analysis():
 
     # Model 3: XGBoost (Tuned)
     print("Tuning XGBoost...")
-    scale_pos_weight = (y == 0).sum() / (y == 1).sum()
+    # scale_pos_weight = (y == 0).sum() / (y == 1).sum() # REMOVED for less aggressive prediction
     xgb_params = {
         'n_estimators': [100, 200, 300],
         'learning_rate': [0.01, 0.05, 0.1, 0.2],
@@ -154,7 +154,6 @@ def run_analysis():
             random_state=42, 
             n_jobs=-1, 
             eval_metric='logloss',
-            scale_pos_weight=scale_pos_weight,
             use_label_encoder=False
         ),
         param_distributions=xgb_params,
@@ -170,7 +169,7 @@ def run_analysis():
 
     # Model 4: SVM (Support Vector Machine)
     print("Fitting SVM...")
-    model_svm = SVC(probability=True, random_state=42, class_weight='balanced', kernel='rbf', C=1.0)
+    model_svm = SVC(probability=True, random_state=42, kernel='rbf', C=1.0)
     model_svm.fit(X_train, y_train)
 
     # Model 5: Ensemble Voting Classifier
